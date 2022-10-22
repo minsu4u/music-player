@@ -1,4 +1,9 @@
-import React, { useImperativeHandle, useRef, forwardRef } from "react";
+import React, {
+  useImperativeHandle,
+  useRef,
+  forwardRef,
+  useCallback,
+} from "react";
 import "./ProgressArea.scss";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import {
@@ -12,10 +17,11 @@ function ProgressArea(props, ref) {
   const audio = useRef();
   const progressBar = useRef();
   const dispatch = useDispatch();
-  const { playList, currentIndex } = useSelector(
+  const { playList, currentIndex, repeat } = useSelector(
     (state) => ({
       playList: state.playList,
       currentIndex: state.currentIndex,
+      repeat: state.repeat,
     }),
     shallowEqual
   );
@@ -32,6 +38,9 @@ function ProgressArea(props, ref) {
     changeVolume: (volume) => {
       audio.current.volume = volume;
     },
+    resetDuration: () => {
+      audio.current.currentTime = 0;
+    },
   }));
 
   const onPlay = () => {
@@ -41,9 +50,14 @@ function ProgressArea(props, ref) {
     dispatch(stopMusic());
   };
 
-  const onEnded = () => {
-    dispatch(nextMusic());
-  };
+  const onEnded = useCallback(() => {
+    if (repeat === "ONE") {
+      audio.current.currentTime = 0;
+      audio.current.play();
+    } else {
+      dispatch(nextMusic());
+    }
+  }, [repeat, dispatch]);
 
   const getTime = (time) => {
     const minute = `0${parseInt(time / 60, 10)}`;
