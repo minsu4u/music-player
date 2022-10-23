@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { memo, useCallback } from "react";
 import RepeatIcon from "@mui/icons-material/Repeat";
 import RepeatOneIcon from "@mui/icons-material/RepeatOne";
 import ShuffleIcon from "@mui/icons-material/Shuffle";
@@ -16,7 +16,7 @@ import {
   setRepeat,
 } from "../../store/musicPlayerReducer";
 
-const RePeatButton = ({ repeat, ...props }) => {
+const RePeatButton = memo(({ repeat, ...props }) => {
   switch (repeat) {
     case "ALL":
       return <RepeatIcon sx={{ fontSize: 30, cursor: "pointer" }} {...props} />;
@@ -31,11 +31,10 @@ const RePeatButton = ({ repeat, ...props }) => {
     default:
       return null;
   }
-};
+});
 
 const Controls = ({
-  showMusicList,
-  setShowMusicList,
+  setShowPlayList,
   resetDuration,
   play,
   pause,
@@ -45,15 +44,18 @@ const Controls = ({
   const repeat = useSelector((state) => state.repeat);
   const dispatch = useDispatch();
 
-  const onClickPlay = () => {
+  const onClickPlay = useCallback(() => {
     play();
-  };
-  const onClickPause = () => {
+  }, [play]);
+  const onClickPause = useCallback(() => {
     pause();
-  };
-  const onChangeVolume = (event) => {
-    changeVolume(event.target.value);
-  };
+  }, [pause]);
+  const onChangeVolume = useCallback(
+    (event) => {
+      changeVolume(event.target.value);
+    },
+    [changeVolume]
+  );
   const onClickPrevious = useCallback(() => {
     if (repeat === "ONE") {
       resetDuration();
@@ -68,13 +70,18 @@ const Controls = ({
       dispatch(nextMusic());
     }
   }, [repeat, resetDuration, dispatch]);
-  const onClickRepeat = () => {
+  const onClickRepeat = useCallback(() => {
     dispatch(setRepeat());
-  };
-
+  }, [dispatch]);
+  const onClickShowPlayList = useCallback(() => {
+    setShowPlayList(true);
+  }, [setShowPlayList]);
   return (
     <div className="control-area">
-      <QueueMusic sx={{ fontSize: 30, cursor: "pointer" }} />
+      <QueueMusic
+        sx={{ fontSize: 30, cursor: "pointer" }}
+        onClick={onClickShowPlayList}
+      />
       <RePeatButton repeat={repeat} onClick={onClickRepeat} />
 
       <SkipPrevious
@@ -113,4 +120,4 @@ const Controls = ({
   );
 };
 
-export default Controls;
+export default memo(Controls);

@@ -3,22 +3,23 @@ import Controls from "./components/Controls/Controls";
 import PlayList from "./components/PlayList/PlayList";
 import ProgressArea from "./components/ProgrssArea/ProgressArea";
 import SongDetail from "./components/SongDetail/SongDetail";
-import React, { useRef } from "react";
+import React, { useCallback, useRef, useState } from "react";
 
 function App() {
   const audioRef = useRef();
-  const onPlay = () => {
+  const [showPlayList, setShowPlayList] = useState(false);
+  const onPlay = useCallback(() => {
     audioRef.current.play();
-  };
-  const onPause = () => {
+  }, []);
+  const onPause = useCallback(() => {
     audioRef.current.pause();
-  };
-  const changeVolume = (volume) => {
+  }, []);
+  const changeVolume = useCallback((volume) => {
     audioRef.current.changeVolume(volume);
-  };
-  const resetDuration = () => {
+  }, []);
+  const resetDuration = useCallback(() => {
     audioRef.current.resetDuration();
-  };
+  }, []);
   return (
     <div className="App">
       <div className="container">
@@ -29,8 +30,12 @@ function App() {
           pause={onPause}
           changeVolume={changeVolume}
           resetDuration={resetDuration}
+          setShowPlayList={setShowPlayList}
         />
-        <PlayList />
+        <PlayList
+          showPlayList={showPlayList}
+          setShowPlayList={setShowPlayList}
+        />
       </div>
     </div>
   );
