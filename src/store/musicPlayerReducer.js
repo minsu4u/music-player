@@ -97,9 +97,9 @@ export default function musicPlayerReducer(state = initialState, action) {
       const nextIndex =
         state.repeat === "SHUFFLE"
           ? getRandomNum(
-              Array.from(Array(playList.length).keys()),
-              state.currentIndex
-            )
+            Array.from(Array(playList.length).keys()),
+            state.currentIndex
+          )
           : (state.currentIndex + 1) % state.playList.length;
       return {
         ...state,
@@ -110,11 +110,11 @@ export default function musicPlayerReducer(state = initialState, action) {
       const prevIndex =
         state.repeat === "SHUFFLE"
           ? getRandomNum(
-              Array.from(Array(playList.length).keys()),
-              state.currentIndex
-            )
+            Array.from(Array(playList.length).keys()),
+            state.currentIndex
+          )
           : (state.currentIndex - 1 + state.playList.length) %
-            state.playList.length;
+          state.playList.length;
       return {
         ...state,
         currentIndex: prevIndex,
@@ -125,7 +125,7 @@ export default function musicPlayerReducer(state = initialState, action) {
         ...state,
         repeat:
           repeatMode[
-            (repeatMode.indexOf(state.repeat) + 1) % repeatMode.length
+          (repeatMode.indexOf(state.repeat) + 1) % repeatMode.length
           ],
       };
     case SET_CURRENT_INDEX:
